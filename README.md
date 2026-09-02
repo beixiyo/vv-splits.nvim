@@ -3,6 +3,8 @@
 
   <p><a href="./README.md">English</a> | <a href="./README.zh-CN.md">中文</a></p>
 
+  <p>Want my Neovim config? See <a href="https://github.com/beixiyo/dotfiles">dotfiles</a></p>
+
   <p><em>Native Neovim separator movement with seamless tmux, Kitty, and WezTerm navigation</em></p>
 
   <p>
