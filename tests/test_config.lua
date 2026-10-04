@@ -1,32 +1,41 @@
--- 公共配置和 mux 生命周期约定
+-- 收集阶段只注册场景；每个场景由独立子进程执行。
+local T, child = dofile('tests/child.lua').new_set()
 
-local H = dofile(vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h') .. '/helpers.lua')
-local splits = require('vv-splits')
+T['配置副本、非法输入拒绝与适配器切换生命周期'] = function()
+  child.lua_func(function()
+    -- 公共配置和 mux 生命周期约定
 
-splits.setup({ mux = false })
-local defaults = splits.get_config()
-H.equal(defaults.amount, 3, 'default resize amount')
-H.equal(defaults.float_behavior, 'previous', 'default float behavior')
+    local H = dofile(vim.env.VV_TEST_REPO .. '/tests/helpers.lua')
+    local splits = require('vv-splits')
 
-defaults.amount = 99
-H.equal(splits.get_config().amount, 3, 'get_config returns a copy')
+    splits.setup({ mux = false })
+    local defaults = splits.get_config()
+    H.equal(defaults.amount, 3, '默认缩放步长')
+    H.equal(defaults.float_behavior, 'previous', '默认浮窗策略')
 
-local attached = 0
-local detached = 0
-local adapter = {
-  attach = function() attached = attached + 1 end,
-  detach = function() detached = detached + 1 end,
-  move = function() return false end,
-  resize = function() return false end,
-}
+    defaults.amount = 99
+    H.equal(splits.get_config().amount, 3, '配置读取返回独立副本')
 
-splits.setup({ mux = adapter })
-H.equal(attached, 1, 'custom mux attaches once')
-splits.setup({ mux = false })
-H.equal(detached, 1, 'reconfiguring detaches the previous mux')
+    local attached = 0
+    local detached = 0
+    local adapter = {
+      attach = function() attached = attached + 1 end,
+      detach = function() detached = detached + 1 end,
+      move = function() return false end,
+      resize = function() return false end,
+    }
 
-H.truthy(not pcall(splits.setup, { amount = 0 }), 'zero amount must be rejected')
-H.truthy(not pcall(splits.setup, { mux = 'unknown' }), 'unknown mux must be rejected')
-H.truthy(not pcall(splits.move, { direction = 'diagonal' }), 'unknown direction must be rejected')
+    splits.setup({ mux = adapter })
+    H.equal(attached, 1, '自定义适配器只挂载一次')
+    splits.setup({ mux = false })
+    H.equal(detached, 1, '重新配置卸载前一适配器')
 
-splits.setup({ mux = false })
+    H.truthy(not pcall(splits.setup, { amount = 0 }), '零步长必须被拒绝')
+    H.truthy(not pcall(splits.setup, { mux = 'unknown' }), '未知适配器必须被拒绝')
+    H.truthy(not pcall(splits.move, { direction = 'diagonal' }), '未知方向必须被拒绝')
+
+    splits.setup({ mux = false })
+  end)
+end
+
+return T

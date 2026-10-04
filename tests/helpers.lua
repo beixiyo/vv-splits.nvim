@@ -10,7 +10,7 @@ local M = { root = root }
 ---@param expected any
 ---@param message string
 function M.equal(actual, expected, message)
-  assert(vim.deep_equal(actual, expected), ('%s\nexpected: %s\nactual:   %s')
+  assert(vim.deep_equal(actual, expected), ('%s\n期望：%s\n实际：%s')
     :format(message, vim.inspect(expected), vim.inspect(actual)))
 end
 
