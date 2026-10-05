@@ -66,20 +66,11 @@ Kitty native mode needs `allow_remote_control`, `kitten` on `PATH`, and `map --w
 ## Development tests
 
 ```sh
-./tests/run.sh
-./tests/run.sh '中间列'
-NVIM_BIN=/path/to/nvim ./tests/run.sh
+./tests/run.sh [literal-filter]
 ```
 
-Unix-like systems only; requires Neovim 0.12+ (0.12 stable recommended), Git and POSIX shell.
-`./tests/run.sh` prepares pinned vv-utils (`ed9b6ae`) and mini.test sources on first use;
-no sibling checkout, personal Neovim configuration or parser installation is required.
-Dependencies are cached under `VV_TEST_DEPS_CACHE` (default: `$XDG_CACHE_HOME/nvim-test-deps`
-or `~/.cache/nvim-test-deps`); later runs work offline with a populated cache.
-`VV_UTILS` optionally overrides the shared source checkout; `NVIM_BIN` defaults to `nvim`.
-The optional filter matches a literal substring of the file path or Chinese case name;
-no matches fails. The entrypoint does not install system tools.
+Requires Unix-like OS, Neovim 0.12+, Git, POSIX shell and an existing vv-utils.nvim source checkout containing `dev/test/`. The entry discovers development or installed sources; override with `VV_UTILS` or select Neovim with `NVIM_BIN`. It neither loads personal configuration nor downloads vv plugins.
 
-Real cross-pane integration additionally requires tmux. It starts a dedicated socket in the fixture with `/dev/null` configuration and explicit sleep processes, never the user’s server or interactive shell. Kitty and WezTerm adapters use injected command runners, not installed GUI clients. Missing tmux is an explicit failure, not a skip.
+Requires tmux for real cross-pane tests: a fixture-owned socket, /dev/null configuration and explicit sleep processes isolate it from user servers. Kitty/WezTerm use injected runners, not GUI clients. Utils is test infrastructure only, not a production dependency.
 
-Each case uses a fresh child Neovim and isolated `/tmp` cwd, HOME and XDG directories. Cleanup runs on failure too. Headless tests cover API and state, not visual behavior; CI needs an outer job timeout for blocked RPC.
+Filtering is literal; no matches exits nonzero. Discovery, mini.test preparation and isolation are documented in the [shared test guide](https://github.com/beixiyo/vv-utils.nvim/blob/main/dev/test/README.md).
