@@ -9,7 +9,7 @@ local resize = require('vv-splits.resize')
 local M = {}
 
 ---配置本地 split 行为和可选的 multiplexer 适配器
----@param opts? VVSplitsSetupOpts
+---@param opts? VVSplitsOpts
 function M.setup(opts)
   local next_config = config.setup(opts)
   mux.setup(next_config.mux)

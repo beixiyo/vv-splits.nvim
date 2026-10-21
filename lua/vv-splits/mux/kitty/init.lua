@@ -18,7 +18,13 @@ local function send_to_ui(value)
   return true
 end
 
----@param opts? { env?: table, run?: fun(command: string[]): boolean, string, string, write?: fun(value: string): boolean?, script?: string }
+---@class VVSplitsKittyAdapterOpts
+---@field env? table
+---@field run? fun(command: string[]): boolean, string, string
+---@field write? fun(value: string): boolean?
+---@field script? string
+
+---@param opts? VVSplitsKittyAdapterOpts
 ---@return VVSplitsMuxAdapter
 function M.new(opts)
   opts = opts or {}

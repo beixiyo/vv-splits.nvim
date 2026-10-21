@@ -12,19 +12,14 @@ local M = {}
 ---@field move fun(direction: VVSplitsDirection): boolean
 ---@field resize fun(direction: VVSplitsDirection, amount: integer): boolean
 
----@class VVSplitsSetupOpts
----@field amount? integer 每次缩放的列数或行数 @default 3
----@field mux? VVSplitsMuxName|false|VVSplitsMuxAdapter Multiplexer 适配器或自动检测 @default 'auto'
----@field float_behavior? VVSplitsFloatBehavior 处理来自浮窗的操作的方式 @default 'previous'
----@field skip_window? fun(win: integer): boolean 导航专用的透明窗口判定函数 @default function() return false end
----@field with_resize? fun(action: fun(): boolean): boolean 包装每次缩放操作的布局事务 @default function(action) return action() end
-
 ---@class VVSplitsConfig
----@field amount integer 每次缩放的列数或行数
----@field mux VVSplitsMuxName|false|VVSplitsMuxAdapter Multiplexer 适配器或自动检测
----@field float_behavior VVSplitsFloatBehavior 处理来自浮窗的操作的方式
----@field skip_window fun(win: integer): boolean 导航专用的透明窗口判定函数
----@field with_resize fun(action: fun(): boolean): boolean 包装每次缩放操作的布局事务
+---@field amount integer 每次缩放的列数或行数 @default 3
+---@field mux VVSplitsMuxName|false|VVSplitsMuxAdapter Multiplexer 适配器或自动检测 @default 'auto'
+---@field float_behavior VVSplitsFloatBehavior 处理来自浮窗的操作的方式 @default 'previous'
+---@field skip_window fun(win: integer): boolean 导航专用的透明窗口判定函数 @default function() return false end
+---@field with_resize fun(action: fun(): boolean): boolean 包装每次缩放操作的布局事务 @default function(action) return action() end
+
+---@class (partial) VVSplitsOpts: VVSplitsConfig
 
 local defaults = {
   amount = 3,
@@ -38,7 +33,7 @@ local defaults = {
 local config = vim.tbl_extend('force', {}, defaults)
 
 ---规范化和验证部分公共配置
----@param opts? VVSplitsSetupOpts
+---@param opts? VVSplitsOpts
 ---@return VVSplitsConfig
 function M.setup(opts)
   assert(opts == nil or type(opts) == 'table', 'opts must be a table or nil')
